@@ -140,6 +140,54 @@ def testVersionSteps(
         )
 
     # ----------------------------------------
+    # list the version
+    r = testVersion.testSyncVersion(
+        aOperationsHandle=aOperationsHandle,
+        project=project,
+        package=package,
+        version=version,
+    )
+    if r is False:
+        return r
+
+    if 1:
+        r = testVersion.testRejectVersion(
+            aOperationsHandle=aOperationsHandle,
+            project=project,
+            package=package,
+            version=version,
+        )
+        if r is False:
+            return r
+    else:
+        r = testVersion.testApproveVersion(
+            aOperationsHandle=aOperationsHandle,
+            project=project,
+            package=package,
+            version=version,
+        )
+        if r is False:
+            return r
+
+        r = testVersion.testRevokeVersion(
+            aOperationsHandle=aOperationsHandle,
+            project=project,
+            package=package,
+            version=version,
+        )
+        if r is False:
+            return r
+
+    r = testVersion.testListVersion(
+        aOperationsHandle=aOperationsHandle,
+        project=project,
+        package=package,
+        version=version,
+    )
+    if r is False:
+        return r
+
+    # ----------------------------------------
     r = testPackage.testListPackageOnly(
         aOperationsHandle=aOperationsHandle,
         project=project,
@@ -147,6 +195,9 @@ def testVersionSteps(
     )
     if r is False:
         return r
+
+    if 0:
+        return True
 
     # ----------------------------------------
     r = testPackage.testDeletePackage(

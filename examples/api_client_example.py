@@ -324,6 +324,85 @@ def status_version(
     return version_check_response.json()
 
 
+# SYNC
+def sync_version(
+    api_client: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+) -> Any:
+    rr = api_client.sync(
+        project=project,
+        package=package,
+        version=version,
+    )
+    print("Version sync", rr.status_code, rr.text)
+    return rr
+
+
+def approve_version(
+    api_client: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+    reason: str | None = None,
+) -> Any:
+    qp: Dict[str, Any] = {}
+    if reason:
+        qp["reason"] = reason
+
+    rr = api_client.approve(
+        project=project,
+        package=package,
+        version=version,
+        **qp,
+    )
+    print("Version approve", rr.status_code, rr.text)
+    return rr
+
+
+def reject_version(
+    api_client: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+    reason: str | None = None,
+) -> Any:
+    qp: Dict[str, Any] = {}
+    if reason:
+        qp["reason"] = reason
+
+    rr = api_client.reject(
+        project=project,
+        package=package,
+        version=version,
+        **qp,
+    )
+    print("Version reject", rr.status_code, rr.text)
+    return rr
+
+
+def revoke_version(
+    api_client: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+    reason: str | None = None,
+) -> Any:
+    qp: Dict[str, Any] = {}
+    if reason:
+        qp["reason"] = reason
+
+    rr = api_client.revoke(
+        project=project,
+        package=package,
+        version=version,
+        **qp,
+    )
+    print("Version revoke", rr.status_code, rr.text)
+    return rr
+
+
 # DOWNLOAD a approved version file
 def download_versions(
     api_client: SpectraAssureApiOperations,
@@ -432,6 +511,8 @@ def walk_all_project_package_version(
 
 def x_main() -> None:
     api_client = make_api_client()
+    with_reject = False
+    with_delete = True
 
     new_project = "SDK test project"
     new_package = "SDK test package"
@@ -498,11 +579,75 @@ def x_main() -> None:
             version=new_version,
         )
 
+        # sync
+        sync_version(
+            api_client=api_client,
+            project=new_project,
+            package=new_package,
+            version=new_version,
+        )
+
+        list_version(
+            api_client=api_client,
+            project=new_project,
+            package=new_package,
+            version=new_version,
+        )
+
+        if with_reject:
+            # reject
+            reject_version(
+                api_client=api_client,
+                project=new_project,
+                package=new_package,
+                version=new_version,
+                reason="Just a Reject test",
+            )
+
+            list_version(
+                api_client=api_client,
+                project=new_project,
+                package=new_package,
+                version=new_version,
+            )
+        else:
+            # approve
+            approve_version(
+                api_client=api_client,
+                project=new_project,
+                package=new_package,
+                version=new_version,
+                reason="Just a Approve test",
+            )
+
+            list_version(
+                api_client=api_client,
+                project=new_project,
+                package=new_package,
+                version=new_version,
+            )
+
+            # revoke
+            revoke_version(
+                api_client=api_client,
+                project=new_project,
+                package=new_package,
+                version=new_version,
+                reason="Just a Revoke test",
+            )
+
+            list_version(
+                api_client=api_client,
+                project=new_project,
+                package=new_package,
+                version=new_version,
+            )
+
     walk_all_project_package_version(
         api_client=api_client,
     )
 
-    if delete_test_data:
+    if with_delete and delete_test_data:
         delete_version(
             api_client=api_client,
             project=new_project,

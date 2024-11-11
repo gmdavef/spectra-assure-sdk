@@ -44,6 +44,10 @@ TESTS := test-list-all test-project-steps test-package-steps test-version-steps 
 # TESTS := test-download $(TEST_EXAMPLES)
 # TESTS := test-download
 
+COMMON_VENV := 	rm -rf $(VENV); \
+	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
+	source ./$(VENV)/bin/activate;
+
 
 .PHONY: clean prep tests
 
@@ -96,9 +100,7 @@ api_client_example: prep
 
 # test using the generated stubs
 mypy-stubs:
-	rm -rf $(VENV)
-	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
-	source ./$(VENV)/bin/activate; \
+	$(COMMON_VENV) \
 	pip3 install --disable-pip-version-check  -q mypy; \
 	pip3 install --disable-pip-version-check  -q types-requests; \
 	pip3 install --disable-pip-version-check  -q $(PACKAGE_TEST_INSTALL); \
@@ -106,9 +108,7 @@ mypy-stubs:
 
 # test using the type hint py.typed
 mypy:
-	rm -rf $(VENV)
-	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
-	source ./$(VENV)/bin/activate; \
+	$(COMMON_VENV) \
 	pip3 install --disable-pip-version-check  -q mypy; \
 	pip3 install --disable-pip-version-check  -q types-requests; \
 	pip3 install --disable-pip-version-check  -q $(PACKAGE_TEST_INSTALL); \

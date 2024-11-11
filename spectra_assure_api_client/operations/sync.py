@@ -1,3 +1,6 @@
+# https://{portalUrl}/api/public/v1/sync/{organization}/{group}/pkg:rl/{project}/{package}@{version}
+# no qp
+
 from typing import (
     Any,
 )
@@ -14,31 +17,31 @@ from .base import SpectraAssureApiOperationsBase
 logger = logging.getLogger(__name__)
 
 
-class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
+class SpectraAssureApiOperationsSync(  # pylint: disable=too-many-ancestors
     SpectraAssureApiOperationsBase,
 ):  # pylint: disable=too-many-instance-attributes
-    def list(
+    def sync(
         self,
         *,
-        project: str | None = None,
-        package: str | None = None,
-        version: str | None = None,
+        project: str,
+        package: str,
+        version: str,
         auto_adapt_to_throttle: bool = False,
-        **qp: Any,  # not actually used in list
+        **qp: Any,  # not actually used in sync
     ) -> Any:
         """
         Action:
-            Execute a list() API call.
+            Execute a sync() API call.
 
         Args:
-         - project: str | None, optional.
-         - package: str | None, optional.
-         - version: str | None, optional.
+         - project: str, mandatory.
+         - package: str, mandatory.
+         - version: str, mandatory.
          - auto_adapt_to_throttle: bool, default False, optional.
          - qp: Dict[str,Any] , optional.
 
         Return:
-            The 'requests.result' of the list API call.
+            The 'requests.result' of the sync API call.
 
         Raises:
             May raise exceptions on issues with the HTTP connection or wrong parameters.
@@ -46,16 +49,11 @@ class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
             - <any other exception> from requests.get().
 
         QueryParameters:
-            'list' has no query parameters.
+            'sync' has no query parameters.
 
-        Notes:
-            When 'project' is not specified, we list all projects in the current group.
-            When 'package' is not specified, we list all packages in the current project.
-            When 'version' is not specified, we list all versions in the current package.
-            When a 'version' is specified, we list the details of this version.
         """
 
-        action = "list"
+        action = "sync"
         what = self._what(
             project=project,
             package=package,
@@ -63,13 +61,10 @@ class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
         )
 
         supported = [
-            "group",
-            "project",
-            "package",
             "version",
         ]
         if what not in supported:
-            msg = f"'list' is only supported for {'and '.join(supported)}"
+            msg = f"'sync' is only supported for {'and '.join(supported)}"
             raise SpectraAssureInvalidAction(message=msg)
 
         url = self._make_current_url(
@@ -80,7 +75,8 @@ class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
         )
 
         qp = {}
-        return self.do_it_get(
+        return self.do_it_post(
+            action=action,
             url=url,
             auto_adapt_to_throttle=auto_adapt_to_throttle,
             **qp,

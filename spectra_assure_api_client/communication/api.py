@@ -7,22 +7,25 @@ from typing import (
     Any,
 )
 
-from .delete import SpectraAssureApiDelete
 from .exceptions import (
     SpectraAssureInvalidAction,
 )
+
+from .delete import SpectraAssureApiDelete
 from .get import SpectraAssureApiGet
 from .patch import SpectraAssureApiPatch
 from .post import SpectraAssureApiPost
+from .put import SpectraAssureApiPut
 
 logger = logging.getLogger(__name__)
 
 
 class SpectraAssureApi(  # pylint: disable=too-many-instance-attributes
+    SpectraAssureApiDelete,
     SpectraAssureApiGet,
     SpectraAssureApiPatch,
-    SpectraAssureApiDelete,
     SpectraAssureApiPost,
+    SpectraAssureApiPut,
 ):
     keywords = [
         "server",

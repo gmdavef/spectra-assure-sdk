@@ -9,6 +9,10 @@ from spectra_assure_api_client.operations.list import SpectraAssureApiOperations
 from spectra_assure_api_client.operations.report import SpectraAssureApiOperationsReport
 from spectra_assure_api_client.operations.scan import SpectraAssureApiOperationsScan
 from spectra_assure_api_client.operations.status import SpectraAssureApiOperationsStatus
+from spectra_assure_api_client.operations.sync import SpectraAssureApiOperationsSync
+from spectra_assure_api_client.operations.approve import SpectraAssureApiOperationsApprove
+from spectra_assure_api_client.operations.reject import SpectraAssureApiOperationsReject
+from spectra_assure_api_client.operations.revoke import SpectraAssureApiOperationsRevoke
 
 # pseudo operation
 from spectra_assure_api_client.operations.download import SpectraAssureApiOperationsDownload
@@ -26,5 +30,9 @@ class SpectraAssureApiOperations(  # pylint: disable=too-many-ancestors
     SpectraAssureApiOperationsStatus,  # Show analysis status for a version
     SpectraAssureApiOperationsChecks,  # Show performed checks for a version
     SpectraAssureApiOperationsDownload,  # Get artifact download link for a version (uses List and Status)
+    SpectraAssureApiOperationsSync,  # start a new scan if needed (e.g. new engine, see docs)
+    SpectraAssureApiOperationsApprove,  # approve a version
+    SpectraAssureApiOperationsReject,  # reject a version
+    SpectraAssureApiOperationsRevoke,  # revoke a previously accepted version
 ):
     """A class that combines all operations"""

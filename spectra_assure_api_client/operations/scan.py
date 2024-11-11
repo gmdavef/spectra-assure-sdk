@@ -125,8 +125,16 @@ class SpectraAssureApiOperationsScan(  # pylint: disable=too-many-ancestors
             msg = f"'scan' needs the specified file '{file_path}' to exist and be readable"
             raise SpectraAssureInvalidAction(message=msg)
 
-        valid_qp: Dict[str, Any] = self.qp_scan(what=what, **qp)
-        url = self._make_current_url(action=action, project=project, package=package, version=version)
+        valid_qp: Dict[str, Any] = self.qp_scan(
+            what=what,
+            **qp,
+        )
+        url = self._make_current_url(
+            action=action,
+            project=project,
+            package=package,
+            version=version,
+        )
 
         return self.do_it_post(
             action=action,

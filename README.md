@@ -36,7 +36,6 @@ With the Spectra Assure Portal, you can:
 
 ## Table of contents
 
-- [Versioning](#versioning)
 - [Requirements and dependencies](#requirements-and-dependencies)
 - [Installation](#installation)
 - [Authentication](#authentication)
@@ -51,14 +50,7 @@ With the Spectra Assure Portal, you can:
    - [Operations](#operations)
 - [Support](#support)
 - [License](#license)
-
-
-
-## Versioning
-
-| SDK Version | Status | API version |
-| -- | -- | -- |
-| 1.0 | Latest | v1 |
+- [Versioning](#versioning)
 
 
 ## Requirements and dependencies
@@ -466,6 +458,42 @@ the API responds with an error and the download capacity remains unaffected.
 | Targets |  |  |  | ✔️ |
 | Query parameters |  |  |  | ✔️ |
 
+[`SpectraAssureApiOperationsSync`](./doc/sync.md)
+
+**Sync a version.**
+
+|        | Group | Project | Package | Version |
+| --     | --    |    --   |  --     |    --   |
+| Targets |  |  |  | ✔️ |
+| Query parameters |  |  |  |  |
+
+[`SpectraAssureApiOperationsApprove`](./doc/approve.md)
+
+**Approve a version.**
+
+|        | Group | Project | Package | Version |
+| --     | --    |    --   |  --     |    --   |
+| Targets |      |         |         | ✔️      |
+| Query parameters |    |  |         | ✔️      |
+
+[`SpectraAssureApiOperationsReject`](./doc/reject.md)
+
+**Reject a version.**
+
+|        | Group | Project | Package | Version |
+| --     | --    |    --   |  --     |    --   |
+| Targets |      |         |         | ✔️      |
+| Query parameters |    |  |         | ✔️      |
+
+[`SpectraAssureApiOperationsRevoke`](./doc/revoke.md)
+
+**Revoke a previously approved version.**
+
+|        | Group | Project | Package | Version |
+| --     | --    |    --   |  --     |    --   |
+| Targets |      |         |         | ✔️      |
+| Query parameters |    |  |         | ✔️      |
+
 
 ## Support
 
@@ -482,13 +510,10 @@ In those cases, contact the author(s) of the modified SDK for help.
 
 The Spectra Assure SDK (Software Development Kit) for Python is released under [the MIT License](./LICENSE.MD).
 
-<<<<<<< HEAD
-## History
+## Versioning
 
 | Version | Description |
 | --      | --          |
-| v1.0.0  | initial     |
+| v1.0.2  | add version actions: `sync`, `approve`, `reject`, `revoke`  |
 | v1.0.1  | add `rl-uri` report |
-=======
-<!-- 2024-09-26: Spectra Assure CLI 2.4.0 has been released; -->
->>>>>>> 31e79e42f11f1d96ffe57e07c853b87d7342f2e5
+| v1.0.0  | initial     |

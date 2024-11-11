@@ -1,16 +1,20 @@
 # makefile; ts=4
 
-MIN_PYTHON_VERSION	:= python3.10
-VENV				:= ./vtmp/
-
-PACKAGE_NAME		:= spectra_assure_api_client
-LINE_LENGTH 		:= 120
-PY_FILES 			:= tests $(PACKAGE_NAME)
-
+MIN_PYTHON_VERSION := python3.10
 export MIN_PYTHON_VERSION
+
+VENV := ./vtmp/
 export VENV
 
-PL_LINTERS			:=	eradicate,mccabe,pycodestyle,pyflakes,pylint
+PACKAGE_NAME := spectra_assure_api_client
+LINE_LENGTH := 120
+PY_FILES := examples tests $(PACKAGE_NAME)
+
+DOC_DIR := ./doc/
+STUBS_DIR := ./stubs/
+
+
+PL_LINTERS := eradicate,mccabe,pycodestyle,pyflakes,pylint
 
 # C0103 Variable name "%s" doesn't conform to snake_case naming style [pylint]
 # C0114 Missing module docstring [pylint]
@@ -21,6 +25,11 @@ PL_LINTERS			:=	eradicate,mccabe,pycodestyle,pyflakes,pylint
 # E402 module level import not at top of file [pycodestyle]
 
 PL_IGNORE="C0103,C0114,C0115,C0116,C0301,E203,E402,C901"
+
+COMMON_VENV := rm -rf $(VENV); \
+	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
+	source ./$(VENV)/bin/activate;
+
 
 .PHONY: prep all tests black pylama mypy testLocalInstall build
 
@@ -43,18 +52,14 @@ cleanupVenv:
 	rm -rf ./tests/$(VENV)
 
 black:
-	rm -rf $(VENV)
-	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
-	source ./$(VENV)/bin/activate; \
+	$(COMMON_VENV) \
 	pip3 install black; \
 	black \
 		--line-length $(LINE_LENGTH) \
 		$(PY_FILES)
 
 pylama:
-	rm -rf $(VENV)
-	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
-	source ./$(VENV)/bin/activate; \
+	$(COMMON_VENV) \
 	pip3 install pylama; \
 	pylama \
 		--max-line-length $(LINE_LENGTH) \
@@ -63,17 +68,18 @@ pylama:
 		$(PY_FILES)
 
 mypy:
-	rm -rf $(VENV)
-	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
-	source ./$(VENV)/bin/activate; \
+	$(COMMON_VENV) \
 	pip3 install mypy; \
 	pip3 install types-requests; \
 	mypy --strict --no-incremental $(PACKAGE_NAME)
 
 makeStubs:
-	rm -rf stubs out */*.pyi */*/*.pyi
-	mkdir stubs
-	stubgen $(PACKAGE_NAME) -o stubs
+	rm -rf $(STUBS_DIR) out */*.pyi */*/*.pyi
+	mkdir $(STUBS_DIR)
+	$(COMMON_VENV) \
+	pip3 install mypy; \
+	pip3 install types-requests; \
+	stubgen $(PACKAGE_NAME) -o $(STUBS_DIR)
 
 tests: testLocalInstall
 	cd tests && make tests
@@ -83,16 +89,21 @@ testLocalInstall: build
 	./testLocalWhl.sh
 
 build:
-	rm -rf $(VENV)
-	$(MIN_PYTHON_VERSION) -m venv $(VENV); \
-	source ./$(VENV)/bin/activate; \
+	$(COMMON_VENV) \
 	pip3 install build; \
 	$(MIN_PYTHON_VERSION) -m build;
 	ls -l dist
 
+testpypi: build
+	twine upload \
+		--config-file=$${HOME}/.pypirc_testing \
+		--repository=testpypi \
+		dist/*
+
 pyreverse:
-	pyreverse spectraAssureApi
-	rm -f packages.dot
-	pyreverse -o svg spectraAssureApi
-	rm -f packages.svg
-	mv *.dot *.svg doc/
+	$(COMMON_VENV) \
+	pip3 install pylint; \
+	pip3 install types-requests; \
+	pyreverse $(PACKAGE_NAME); \
+	pyreverse -o svg $(PACKAGE_NAME); \
+	mv *.svg *.dot $(DOC_DIR)

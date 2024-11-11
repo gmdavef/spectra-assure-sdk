@@ -26,7 +26,9 @@ get_version()
         exit 101
     }
 
-    export PACKAGE_FILE=$( ls dist/${WHAT}-${VERSION}-py3-none-any.whl)
+    export PACKAGE_FILE=$(
+        ls dist/${WHAT}-${VERSION}-py3-none-any.whl
+    )
 
     echo "Dist now contains:"
     ls -l "${PACKAGE_FILE}"
@@ -37,13 +39,10 @@ get_version()
     }
 }
 
-cleanupVenv()
-{
-    rm -rf ${VENV}
-}
 
 makeVenv()
 {
+    rm -rf ${VENV}
     ${MIN_PYTHON_VERSION} -m venv ${VENV}
     source ./${VENV}/bin/activate
 }
@@ -52,7 +51,8 @@ installFromDistWhl()
 {
     ls -l "${PACKAGE_FILE}"
 
-    which pip3 | grep "${VENV}" || {
+    which pip3 |
+    grep "${VENV}" || {
         # verify we are using the pip3 from the virtual env
         echo "FATAL: we are not using the virtual env programs" >&2
         exit 101
@@ -65,9 +65,8 @@ installFromDistWhl()
 main()
 {
     get_version
-    cleanupVenv
     makeVenv
     installFromDistWhl
 }
 
-main $@
+main "$@"

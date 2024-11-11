@@ -155,3 +155,90 @@ def testCreateVersion(
         return r
 
     return True
+
+
+def testSyncVersion(
+    aOperationsHandle: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+) -> bool:
+    action = "Sync Version"
+
+    data = aOperationsHandle.sync(
+        project=project,
+        package=package,
+        version=version,
+        auto_adapt_to_throttle=True,
+    )
+
+    return testing.standardReturn(action, data)
+
+
+def testApproveVersion(
+    aOperationsHandle: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+) -> bool:
+    action = "Approve Version"
+
+    qp: Dict[str, Any] = {
+        "reason": f"some dummy reason: {action}",
+    }
+
+    data = aOperationsHandle.approve(
+        project=project,
+        package=package,
+        version=version,
+        auto_adapt_to_throttle=True,
+        **qp,
+    )
+
+    return testing.standardReturn(action, data)
+
+
+def testRejectVersion(
+    aOperationsHandle: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+) -> bool:
+    action = "Reject Version"
+
+    qp: Dict[str, Any] = {
+        "reason": f"some dummy reason: {action}",
+    }
+
+    data = aOperationsHandle.reject(
+        project=project,
+        package=package,
+        version=version,
+        auto_adapt_to_throttle=True,
+        **qp,
+    )
+
+    return testing.standardReturn(action, data)
+
+
+def testRevokeVersion(
+    aOperationsHandle: SpectraAssureApiOperations,
+    project: str,
+    package: str,
+    version: str,
+) -> bool:
+    action = "Revoke Version"
+
+    qp: Dict[str, Any] = {
+        "reason": f"some dummy reason: {action}",
+    }
+
+    data = aOperationsHandle.revoke(
+        project=project,
+        package=package,
+        version=version,
+        auto_adapt_to_throttle=True,
+        **qp,
+    )
+
+    return testing.standardReturn(action, data)

@@ -1,5 +1,11 @@
+# https://{portalUrl}/api/public/v1/approve/{organization}/{group}/pkg:rl/{project}/{package}@{version}
+# qp:: reason: str
+
+
 from typing import (
     Any,
+    List,
+    Dict,
 )
 
 import logging
@@ -14,31 +20,51 @@ from .base import SpectraAssureApiOperationsBase
 logger = logging.getLogger(__name__)
 
 
-class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
+class SpectraAssureApiOperationsApprove(  # pylint: disable=too-many-ancestors
     SpectraAssureApiOperationsBase,
 ):  # pylint: disable=too-many-instance-attributes
-    def list(
+
+    @staticmethod
+    def qp_approve(
+        *,
+        what: str,
+        **qp: Any,
+    ) -> Dict[str, Any]:
+        r: Dict[str, Any] = {}
+
+        version_qp: List[str] = [
+            "reason",
+        ]
+
+        if what in ["version"]:
+            for k in version_qp:
+                if k in qp:
+                    r[k] = qp[k]
+
+        return r
+
+    def approve(
         self,
         *,
-        project: str | None = None,
-        package: str | None = None,
-        version: str | None = None,
+        project: str,
+        package: str,
+        version: str,
         auto_adapt_to_throttle: bool = False,
-        **qp: Any,  # not actually used in list
+        **qp: Any,
     ) -> Any:
         """
         Action:
-            Execute a list() API call.
+            Execute a approve() API call.
 
         Args:
-         - project: str | None, optional.
-         - package: str | None, optional.
-         - version: str | None, optional.
+         - project: str, mandatory.
+         - package: str, mandatory.
+         - version: str, mandatory.
          - auto_adapt_to_throttle: bool, default False, optional.
          - qp: Dict[str,Any] , optional.
 
         Return:
-            The 'requests.result' of the list API call.
+            The 'requests.result' of the approve API call.
 
         Raises:
             May raise exceptions on issues with the HTTP connection or wrong parameters.
@@ -46,16 +72,12 @@ class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
             - <any other exception> from requests.get().
 
         QueryParameters:
-            'list' has no query parameters.
+            scan supports the following query parameters:
+             - reason: str
 
-        Notes:
-            When 'project' is not specified, we list all projects in the current group.
-            When 'package' is not specified, we list all packages in the current project.
-            When 'version' is not specified, we list all versions in the current package.
-            When a 'version' is specified, we list the details of this version.
         """
 
-        action = "list"
+        action = "approve"
         what = self._what(
             project=project,
             package=package,
@@ -63,13 +85,10 @@ class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
         )
 
         supported = [
-            "group",
-            "project",
-            "package",
             "version",
         ]
         if what not in supported:
-            msg = f"'list' is only supported for {'and '.join(supported)}"
+            msg = f"'approve' is only supported for {'and '.join(supported)}"
             raise SpectraAssureInvalidAction(message=msg)
 
         url = self._make_current_url(
@@ -79,9 +98,12 @@ class SpectraAssureApiOperationsList(  # pylint: disable=too-many-ancestors
             version=version,
         )
 
-        qp = {}
-        return self.do_it_get(
+        valid_qp: Dict[str, Any] = self.qp_approve(
+            what=what,
+            **qp,
+        )
+        return self.do_it_put(
             url=url,
             auto_adapt_to_throttle=auto_adapt_to_throttle,
-            **qp,
+            **valid_qp,
         )

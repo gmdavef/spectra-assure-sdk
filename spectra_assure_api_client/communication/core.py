@@ -176,10 +176,23 @@ class SpectraAssureApiCore:
             return response
 
         if 200 <= response.status_code < 300:
+            logger.info(
+                "%s %s",
+                response.status_code,
+                response.text,
+            )
+            return response
+
+        if response.status_code == 404:  # Not found
+            logger.info(
+                "NotFound: %s %s",
+                response.status_code,
+                response.text,
+            )
             return response
 
         if 400 <= response.status_code < 500:
-            logger.error(
+            logger.warning(
                 "%s %s",
                 response.status_code,
                 response.text,
